@@ -1,0 +1,48 @@
+[intro]
+Hey! Hey! Hey!
+
+[verse 1]
+We gathered in the tavern with a whiteboard and a plan
+A feature list as long as the road to Donegal
+The product man was singing of a dream he had last night
+And we wrote it down as stories, every one a fight
+
+[chorus]
+So raise your glass, me lads, to the software life
+Test it early, shift it left, ship it left tonight
+Plan it, build it, break it, fix it before it hits the door
+Ship it left, me lads, ship it left once more
+
+[verse 2]
+The architect drew boxes on the back of a coaster
+The model wrote the scaffolding faster than we'd noticed
+Then the tests all went to red and the tests all went to green
+And the agent swore it fixed it but the fix was never seen
+
+[chorus]
+So raise your glass, me lads, to the software life
+Test it early, shift it left, ship it left tonight
+Plan it, build it, break it, fix it before it hits the door
+Ship it left, me lads, ship it left once more
+
+[verse 3]
+We deployed on a Friday with a prayer and a pint
+The dashboards lit like lanterns and the pager rang all night
+The model read the logs and it found the root cause
+Then it opened up a pull request and we all gave it applause
+
+[bridge]
+Now we write the tests at the planning, we scan the code at the start
+We catch it in the design before it breaks apart
+And the tokens fall like rain on the cobbles of the town
+But the cheapest bug to fix is the one we never found
+
+[chorus]
+So raise your glass, me lads, to the software life
+Test it early, shift it left, ship it left tonight
+Plan it, build it, break it, fix it before it hits the door
+Ship it left, me lads, ship it left once more
+
+[outro]
+Hey! Hey! Hey!
+Shift it left, me lads, ship it left
