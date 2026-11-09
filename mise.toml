@@ -1,3 +1,19 @@
 [tools]
 ffmpeg = "latest"
 mpv = "latest"
+
+[tasks.setup]
+description = "Clone the pinned ACE-Step backend and install its Python env"
+run = "scripts/setup.sh"
+
+[tasks.serve]
+description = "Start the REST server and the ACE-Step backend"
+run = "cargo run --release -- serve"
+
+[tasks.generate]
+description = "Generate a song: mise run generate -- \"<style>\" --lyrics-file lyrics.txt -d 60"
+run = "cargo run --release -- generate"
+
+[tasks.test]
+description = "Run lint and tests"
+run = ["cargo clippy --all-targets", "cargo test"]

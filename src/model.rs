@@ -1,0 +1,152 @@
+use std::str::FromStr;
+
+use serde::{Deserialize, Serialize};
+
+pub const MIN_DURATION_SECS: f32 = 10.0;
+pub const MAX_DURATION_SECS: f32 = 600.0;
+pub const MIN_BPM: u16 = 30;
+pub const MAX_BPM: u16 = 300;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum AudioFormat {
+    #[default]
+    Flac,
+    Mp3,
+    Wav,
+}
+
+impl AudioFormat {
+    pub fn extension(self) -> &'static str {
+        match self {
+            Self::Flac => "flac",
+            Self::Mp3 => "mp3",
+            Self::Wav => "wav",
+        }
+    }
+}
+
+impl FromStr for AudioFormat {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_ascii_lowercase().as_str() {
+            "flac" => Ok(Self::Flac),
+            "mp3" => Ok(Self::Mp3),
+            "wav" => Ok(Self::Wav),
+            other => Err(format!(
+                "unknown format `{other}` (expected flac, mp3, wav)"
+            )),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SongRequest {
+    pub prompt: String,
+    #[serde(default)]
+    pub lyrics: String,
+    #[serde(default = "default_duration")]
+    pub duration: f32,
+    pub bpm: Option<u16>,
+    pub key_scale: Option<String>,
+    pub seed: Option<i64>,
+    #[serde(default)]
+    pub format: AudioFormat,
+}
+
+fn default_duration() -> f32 {
+    60.0
+}
+
+#[derive(Debug, PartialEq, thiserror::Error)]
+pub enum InvalidRequest {
+    #[error("prompt must not be empty")]
+    EmptyPrompt,
+    #[error("duration must be between {MIN_DURATION_SECS} and {MAX_DURATION_SECS} seconds")]
+    Duration,
+    #[error("bpm must be between {MIN_BPM} and {MAX_BPM}")]
+    Bpm,
+}
+
+impl SongRequest {
+    pub fn validate(&self) -> Result<(), InvalidRequest> {
+        if self.prompt.trim().is_empty() {
+            return Err(InvalidRequest::EmptyPrompt);
+        }
+        if !(MIN_DURATION_SECS..=MAX_DURATION_SECS).contains(&self.duration) {
+            return Err(InvalidRequest::Duration);
+        }
+        if self.bpm.is_some_and(|b| !(MIN_BPM..=MAX_BPM).contains(&b)) {
+            return Err(InvalidRequest::Bpm);
+        }
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum SongState {
+    Running,
+    Succeeded,
+    Failed,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SongStatus {
+    pub id: String,
+    #[serde(rename = "status")]
+    pub state: SongState,
+    pub error: Option<String>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn request() -> SongRequest {
+        SongRequest {
+            prompt: "pop punk".into(),
+            lyrics: String::new(),
+            duration: 60.0,
+            bpm: None,
+            key_scale: None,
+            seed: None,
+            format: AudioFormat::Flac,
+        }
+    }
+
+    #[test]
+    fn validate_enforces_bounds() {
+        type Case = (fn(&mut SongRequest), Result<(), InvalidRequest>);
+        let cases: [Case; 8] = [
+            (|_| {}, Ok(())),
+            (|r| r.prompt = "  ".into(), Err(InvalidRequest::EmptyPrompt)),
+            (|r| r.duration = 9.9, Err(InvalidRequest::Duration)),
+            (|r| r.duration = 10.0, Ok(())),
+            (|r| r.duration = 600.0, Ok(())),
+            (|r| r.duration = 600.1, Err(InvalidRequest::Duration)),
+            (|r| r.bpm = Some(29), Err(InvalidRequest::Bpm)),
+            (|r| r.bpm = Some(300), Ok(())),
+        ];
+        for (mutate, expected) in cases {
+            let mut r = request();
+            mutate(&mut r);
+            assert_eq!(r.validate(), expected);
+        }
+    }
+
+    #[test]
+    fn request_json_applies_defaults() {
+        let r: SongRequest = serde_json::from_str(r#"{"prompt":"lofi"}"#).unwrap();
+        assert_eq!(r.duration, 60.0);
+        assert_eq!(r.format, AudioFormat::Flac);
+        assert_eq!(r.lyrics, "");
+    }
+
+    #[test]
+    fn format_parses_case_insensitively() {
+        assert_eq!("MP3".parse(), Ok(AudioFormat::Mp3));
+        assert!("ogg".parse::<AudioFormat>().is_err());
+    }
+}
