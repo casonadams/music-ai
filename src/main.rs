@@ -49,11 +49,14 @@ enum Command {
         key: Option<String>,
         #[arg(long)]
         seed: Option<i64>,
-        /// flac, mp3 (needs ffmpeg for the server), or wav
-        #[arg(long, default_value = "flac", value_parser = str::parse::<AudioFormat>)]
+        /// mp3 (needs ffmpeg on the server's PATH), flac, or wav
+        #[arg(short, long, default_value = "mp3", value_parser = str::parse::<AudioFormat>)]
         format: AudioFormat,
         #[arg(short, long, default_value = "output")]
         out: PathBuf,
+        /// Output file name without extension (default: the lyrics file's name)
+        #[arg(short, long)]
+        name: Option<String>,
         #[arg(long, env = "MUSICAI_SERVER", default_value = "http://127.0.0.1:8000")]
         server: String,
     },
@@ -85,8 +88,15 @@ async fn main() -> Result<()> {
             seed,
             format,
             out,
+            name,
             server,
         } => {
+            let name = name.or_else(|| {
+                lyrics_file
+                    .as_ref()
+                    .and_then(|p| p.file_stem())
+                    .map(|s| s.to_string_lossy().into_owned())
+            });
             let lyrics = match (lyrics, lyrics_file) {
                 (Some(text), _) => text,
                 (None, Some(path)) => std::fs::read_to_string(&path)
@@ -103,7 +113,7 @@ async fn main() -> Result<()> {
                 format,
             };
             request.validate()?;
-            let path = generate(&server, &request, &out).await?;
+            let path = generate(&server, &request, &out, name.as_deref()).await?;
             println!("{}", path.display());
             Ok(())
         }

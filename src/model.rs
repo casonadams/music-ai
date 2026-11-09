@@ -10,8 +10,8 @@ pub const MAX_BPM: u16 = 300;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum AudioFormat {
-    #[default]
     Flac,
+    #[default]
     Mp3,
     Wav,
 }
@@ -70,6 +70,18 @@ pub enum InvalidRequest {
 }
 
 impl SongRequest {
+    pub fn new(prompt: impl Into<String>) -> Self {
+        Self {
+            prompt: prompt.into(),
+            lyrics: String::new(),
+            duration: default_duration(),
+            bpm: None,
+            key_scale: None,
+            seed: None,
+            format: AudioFormat::default(),
+        }
+    }
+
     pub fn validate(&self) -> Result<(), InvalidRequest> {
         if self.prompt.trim().is_empty() {
             return Err(InvalidRequest::EmptyPrompt);
@@ -104,18 +116,6 @@ pub struct SongStatus {
 mod tests {
     use super::*;
 
-    fn request() -> SongRequest {
-        SongRequest {
-            prompt: "pop punk".into(),
-            lyrics: String::new(),
-            duration: 60.0,
-            bpm: None,
-            key_scale: None,
-            seed: None,
-            format: AudioFormat::Flac,
-        }
-    }
-
     #[test]
     fn validate_enforces_bounds() {
         type Case = (fn(&mut SongRequest), Result<(), InvalidRequest>);
@@ -130,7 +130,7 @@ mod tests {
             (|r| r.bpm = Some(300), Ok(())),
         ];
         for (mutate, expected) in cases {
-            let mut r = request();
+            let mut r = SongRequest::new("pop punk");
             mutate(&mut r);
             assert_eq!(r.validate(), expected);
         }
@@ -140,7 +140,7 @@ mod tests {
     fn request_json_applies_defaults() {
         let r: SongRequest = serde_json::from_str(r#"{"prompt":"lofi"}"#).unwrap();
         assert_eq!(r.duration, 60.0);
-        assert_eq!(r.format, AudioFormat::Flac);
+        assert_eq!(r.format, AudioFormat::Mp3);
         assert_eq!(r.lyrics, "");
     }
 

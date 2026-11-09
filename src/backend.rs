@@ -4,7 +4,7 @@ use serde_json::{Value, json};
 use crate::model::SongRequest;
 
 const NO_AUDIO: &str = "backend reported success but produced no audio file \
-(mp3 export needs ffmpeg on PATH; flac does not)";
+(mp3 export needs ffmpeg on PATH; try --format flac)";
 
 #[derive(Debug, PartialEq)]
 pub enum TaskState {
@@ -143,17 +143,11 @@ pub fn parse_query_result(resp: &Value) -> Result<TaskState> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::model::AudioFormat;
 
     fn request() -> SongRequest {
         SongRequest {
-            prompt: "lofi".into(),
-            lyrics: "[instrumental]".into(),
             duration: 30.0,
-            bpm: None,
-            key_scale: None,
-            seed: None,
-            format: AudioFormat::Mp3,
+            ..SongRequest::new("lofi")
         }
     }
 

@@ -4,12 +4,18 @@ use std::{
 };
 
 use anyhow::{Context, Result, bail};
+use tokio::io::AsyncWriteExt;
 
 use crate::model::{SongRequest, SongState, SongStatus};
 
 const POLL_INTERVAL: Duration = Duration::from_secs(2);
 
-pub async fn generate(server: &str, req: &SongRequest, out_dir: &Path) -> Result<PathBuf> {
+pub async fn generate(
+    server: &str,
+    req: &SongRequest,
+    out_dir: &Path,
+    name: Option<&str>,
+) -> Result<PathBuf> {
     let server = server.trim_end_matches('/');
     let http = reqwest::Client::new();
 
@@ -35,11 +41,43 @@ pub async fn generate(server: &str, req: &SongRequest, out_dir: &Path) -> Result
     let audio = ensure_success(audio).await?.bytes().await?;
 
     tokio::fs::create_dir_all(out_dir).await?;
-    let secs = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
-    let id_prefix: String = created.id.chars().take(8).collect();
-    let path = out_dir.join(format!("{secs}-{id_prefix}.{}", req.format.extension()));
-    tokio::fs::write(&path, &audio).await?;
-    Ok(path)
+    let stem = match name {
+        Some(name) => name.to_owned(),
+        None => {
+            let secs = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
+            let id_prefix: String = created.id.chars().take(8).collect();
+            format!("{secs}-{id_prefix}")
+        }
+    };
+    write_unique(out_dir, &stem, req.format.extension(), &audio).await
+}
+
+pub async fn write_unique(dir: &Path, stem: &str, ext: &str, bytes: &[u8]) -> Result<PathBuf> {
+    if stem.is_empty() || stem.contains(['/', '\\']) {
+        bail!("invalid file name `{stem}`: must be non-empty and contain no path separators");
+    }
+    for n in 1u32.. {
+        let file = if n == 1 {
+            format!("{stem}.{ext}")
+        } else {
+            format!("{stem}-{n}.{ext}")
+        };
+        let path = dir.join(file);
+        let opened = tokio::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&path)
+            .await;
+        match opened {
+            Ok(mut f) => {
+                f.write_all(bytes).await?;
+                return Ok(path);
+            }
+            Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => continue,
+            Err(e) => return Err(e).with_context(|| format!("writing {}", path.display())),
+        }
+    }
+    unreachable!("u32 range exhausted")
 }
 
 async fn ok_json<T: serde::de::DeserializeOwned>(req: reqwest::RequestBuilder) -> Result<T> {
@@ -57,4 +95,40 @@ async fn ensure_success(resp: reqwest::Response) -> Result<reqwest::Response> {
     let status = resp.status();
     let body = resp.text().await.unwrap_or_default();
     bail!("server returned {status}: {body}")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn scratch_dir(label: &str) -> PathBuf {
+        let dir = std::env::temp_dir().join(format!("musicai-{label}-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        dir
+    }
+
+    #[tokio::test]
+    async fn write_unique_never_overwrites_an_existing_song() {
+        let dir = scratch_dir("unique");
+        let first = write_unique(&dir, "song", "mp3", b"one").await.unwrap();
+        let second = write_unique(&dir, "song", "mp3", b"two").await.unwrap();
+        let third = write_unique(&dir, "song", "mp3", b"three").await.unwrap();
+        assert_eq!(first.file_name().unwrap(), "song.mp3");
+        assert_eq!(second.file_name().unwrap(), "song-2.mp3");
+        assert_eq!(third.file_name().unwrap(), "song-3.mp3");
+        assert_eq!(std::fs::read(&first).unwrap(), b"one");
+        assert_eq!(std::fs::read(&second).unwrap(), b"two");
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[tokio::test]
+    async fn write_unique_rejects_names_that_escape_the_directory() {
+        let dir = scratch_dir("reject");
+        for bad in ["", "../x", "a/b", "a\\b"] {
+            assert!(write_unique(&dir, bad, "mp3", b"x").await.is_err(), "{bad}");
+        }
+        assert_eq!(std::fs::read_dir(&dir).unwrap().count(), 0);
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
 }

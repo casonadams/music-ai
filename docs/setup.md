@@ -42,13 +42,13 @@ Observed on an M1 Max with the turbo model: about 25 to 40 seconds for a 30 seco
 
 ## Formats and ffmpeg
 
-`flac` (default) and `wav` need nothing extra. `mp3` export happens inside the ACE-Step backend and needs `ffmpeg` on the `PATH` of the `serve` process. `mise run serve` puts it on `PATH` for you.
+`mp3` (default) export happens inside the ACE-Step backend and needs `ffmpeg` on the `PATH` of the `serve` process; `mise run serve` puts it on `PATH` for you. `flac` and `wav` need nothing extra, so use `-f flac` for lossless output or when running `serve` without mise.
 
 ## Troubleshooting
 
 | Symptom | Cause and fix |
 | --- | --- |
-| Song fails with "no audio file" | You asked for mp3 and `ffmpeg` is not on the server's `PATH`. Use `--format flac` or fix `PATH`. |
+| Song fails with "no audio file" | mp3 is the default and `ffmpeg` is not on the server's `PATH`. Start the server with `mise run serve`, or use `-f flac`. |
 | `.venv/bin/acestep-api not found` | Run `mise run setup`, or pass the right `--backend-dir`. |
 | `no backend reachable` | `--no-backend` was set but nothing listens at `--backend-url`. |
 | `contacting musicai server` error from `generate` | `musicai serve` is not running, or `--server` points elsewhere. |

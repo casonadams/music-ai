@@ -30,7 +30,9 @@ Other tasks: `mise tasks` lists them; `mise run test` runs clippy and the tests.
 | `musicai serve` | Start the REST API on `127.0.0.1:8000` and the ACE-Step backend on `:8001` |
 | `musicai generate <prompt>` | Submit a song, wait, save the audio to `output/`, print the path |
 
-`musicai generate` flags: `--lyrics`, `--lyrics-file`, `-d/--duration` (10-600 s, default 60), `--bpm`, `--key`, `--seed`, `--format` (`flac` default, `mp3`, `wav`), `-o/--out`, `--server`. Run `musicai <command> --help` for details.
+`musicai generate` flags: `--lyrics`, `--lyrics-file`, `-d/--duration` (10-600 s, default 60), `--bpm`, `--key`, `--seed`, `-f/--format` (`mp3` default, `flac`, `wav`), `-n/--name`, `-o/--out`, `--server`. Run `musicai <command> --help` for details.
+
+Output files are named from `--name`, else from the `--lyrics-file` name (`docs/lyrics/agentic-hard-rock.txt` becomes `output/agentic-hard-rock.mp3`), else `<timestamp>-<id>`. An existing file is never overwritten; a repeat run gets `-2`, `-3`, and so on.
 
 ## REST API
 
