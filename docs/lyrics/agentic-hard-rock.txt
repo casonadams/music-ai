@@ -1,0 +1,50 @@
+[intro]
+Yeah! Let's go!
+
+[verse 1]
+Woke up to a ticket and a repo full of code
+Told the agent what I wanted and it hit the open road
+It read a hundred files before I finished my coffee
+Made a plan and called a tool and never asked for sympathy
+
+[pre-chorus]
+No hands on the keyboard, it is running on its own
+Sub-agents spinning up in every terminal zone
+
+[chorus]
+Agents in the loop, plan it, build it, test it, go
+Agents in the loop, watch the tool calls overflow
+Don't you stop it, let it run, but keep a human at the wheel
+Agents in the loop, ship the thing for real
+
+[verse 2]
+One agent wrote the tests and another broke them clean
+Context window filling up with everything it's seen
+It summarized the history and carried on the fight
+Opened up a pull request in the middle of the night
+
+[pre-chorus]
+No hands on the keyboard, it is running on its own
+Sub-agents spinning up in every terminal zone
+
+[chorus]
+Agents in the loop, plan it, build it, test it, go
+Agents in the loop, watch the tool calls overflow
+Don't you stop it, let it run, but keep a human at the wheel
+Agents in the loop, ship the thing for real
+
+[bridge]
+Review it! Read the diff!
+Trust but verify, every single commit
+Review it! Read the diff!
+The agent writes the code but the human owns the ship
+
+[chorus]
+Agents in the loop, plan it, build it, test it, go
+Agents in the loop, watch the tool calls overflow
+Don't you stop it, let it run, but keep a human at the wheel
+Agents in the loop, ship the thing for real
+
+[outro]
+Agents in the loop, yeah
+Ship the thing for real
