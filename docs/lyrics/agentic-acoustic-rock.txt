@@ -1,0 +1,42 @@
+[intro]
+Mm, yeah, oh yeah
+
+[verse 1]
+Sunday morning coffee and a branch I just cut
+An agent in my terminal, we are working side by side
+I tell it what I'm dreaming and it writes it down in code
+We take it slow and steady down this long and winding road
+
+[chorus]
+And we ship it, ship it easy, one small commit at a time
+Got a pair of eyes to read it and a tool to draw the line
+Yeah we ship it, ship it easy, let the tests all run
+Nothing goes to production till the good work is done
+
+[verse 2]
+It asked me for a spec so I wrote it on a page
+It built a little module and it showed me every change
+I caught a little mistake and it laughed and made it right
+We're shipping something real by the time we call it a night
+
+[chorus]
+And we ship it, ship it easy, one small commit at a time
+Got a pair of eyes to read it and a tool to draw the line
+Yeah we ship it, ship it easy, let the tests all run
+Nothing goes to production till the good work is done
+
+[bridge]
+Some days the tokens fall like rain
+Some days the logs make it plain
+But I'll keep my hand on the wheel
+And I'll read every line before I say it's real
+
+[chorus]
+And we ship it, ship it easy, one small commit at a time
+Got a pair of eyes to read it and a tool to draw the line
+Yeah we ship it, ship it easy, let the tests all run
+Nothing goes to production till the good work is done
+
+[outro]
+Mm, ship it easy
+Yeah, one small commit at a time
