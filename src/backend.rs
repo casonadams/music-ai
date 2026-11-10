@@ -126,6 +126,9 @@ pub fn release_body(req: &SongRequest) -> Value {
     if let Some(steps) = req.steps {
         fields.insert("inference_steps".into(), json!(steps));
     }
+    if let Some(guidance) = req.guidance_scale {
+        fields.insert("guidance_scale".into(), json!(guidance));
+    }
     if let Some(lm) = &req.lm_model {
         fields.insert("lm_model_path".into(), json!(lm));
     }
@@ -233,6 +236,7 @@ mod tests {
         req.seed = Some(7);
         req.model = Some("acestep-v15-xl-sft".into());
         req.steps = Some(50);
+        req.guidance_scale = Some(4.0);
         req.lm_model = Some("acestep-5Hz-lm-4B".into());
         let body = release_body(&req);
         assert_eq!(body["bpm"], 120);
@@ -241,6 +245,7 @@ mod tests {
         assert_eq!(body["use_random_seed"], false);
         assert_eq!(body["model"], "acestep-v15-xl-sft");
         assert_eq!(body["inference_steps"], 50);
+        assert_eq!(body["guidance_scale"], 4.0);
         assert_eq!(body["lm_model_path"], "acestep-5Hz-lm-4B");
     }
 

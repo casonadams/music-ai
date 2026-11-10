@@ -103,6 +103,9 @@ pub struct GenerateArgs {
     /// Diffusion steps (about 8 for turbo, 32-64 for base and sft)
     #[arg(long)]
     pub steps: Option<u32>,
+    /// Prompt guidance for base and sft models (turbo ignores it); 4 sounded cleaner than 7
+    #[arg(long)]
+    pub guidance_scale: Option<f32>,
     /// 5Hz LM checkpoint, e.g. acestep-5Hz-lm-4B
     #[arg(long)]
     pub lm_model: Option<String>,

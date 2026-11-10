@@ -38,7 +38,7 @@ Other tasks: `mise tasks` lists them; `mise run test` runs clippy and the tests.
 | Style tags | `--style-file styles/new-wave.txt` | positional `"<style tags>"` |
 | Lyrics | `--lyrics-file lyrics/agentic-loop.txt` | `--lyrics "<text>"` |
 
-Other flags: `-d/--duration` (10-600 s, default 60), `--bpm`, `--key`, `--seed`, `-f/--format` (`mp3` default, `flac`, `wav`), `--model`, `--steps`, `--lm-model` (see [Setup](docs/setup.md#models)), `-n/--name`, `-o/--out`, `--server`. Run `musicai <command> --help` for details.
+Other flags: `-d/--duration` (10-600 s, default 60), `--bpm`, `--key`, `--seed`, `-f/--format` (`mp3` default, `flac`, `wav`), `--model`, `--steps`, `--guidance-scale`, `--lm-model` (see [Setup](docs/setup.md#models) and [Prompting](docs/prompting.md#tuning-notes)), `-n/--name`, `-o/--out`, `--server`. Run `musicai <command> --help` for details.
 
 Styles and lyrics are separate so you can swap either one: `styles/` holds reusable style tags (genre, instruments, vocals, tempo) and `lyrics/` holds songs' words with `[verse]` and `[chorus]` section tags (see [Prompting](docs/prompting.md)). Output files are named `<lyrics>-<style>` from the file names (`agentic-loop` + `new-wave` gives `output/agentic-loop-new-wave.mp3`), or from `--name`, or `<timestamp>-<id>` when inline. An existing file is never overwritten; a repeat run gets `-2`, `-3`, and so on.
 
@@ -46,7 +46,7 @@ Styles and lyrics are separate so you can swap either one: `styles/` holds reusa
 
 | Method | Path | Result |
 | --- | --- | --- |
-| `POST` | `/v1/songs` | `202 {"id","status":"running"}`; body: `prompt`, `lyrics`, `duration`, `bpm`, `key_scale`, `seed`, `format`, `model`, `steps`, `lm_model`, `advanced` |
+| `POST` | `/v1/songs` | `202 {"id","status":"running"}`; body: `prompt`, `lyrics`, `duration`, `bpm`, `key_scale`, `seed`, `format`, `model`, `steps`, `guidance_scale`, `lm_model`, `advanced` |
 | `GET` | `/v1/songs/{id}` | `{"id","status":"running\|succeeded\|failed","error","info"}`; `info` (on success) holds the backend's detected bpm and key, seed and models |
 | `GET` | `/v1/songs/{id}/audio` | Audio bytes; `409` until the song has succeeded |
 | `GET` | `/v1/models` | DiT and LM models the backend is configured to serve |

@@ -38,4 +38,13 @@ Tags: `[intro]`, `[verse]`, `[pre-chorus]`, `[chorus]`, `[bridge]`, `[outro]`, `
 
 ## Backend options not exposed
 
-ACE-Step supports more fields (`time_signature`, `vocal_language`, `batch_size`, `sample_mode`). They are documented in `ACE-Step-1.5/.claude/skills/acestep-docs/api/API.md` and are not passed through by `musicai`.
+ACE-Step supports more fields (`time_signature`, `vocal_language`, `batch_size`, `sample_mode`, `lm_temperature`, `use_cot_caption`, ...). They are documented in `ACE-Step-1.5/.claude/skills/acestep-docs/api/API.md`. `musicai` has no flag for them, but the REST API and the MCP `create_song` tool forward them through the `advanced` object.
+
+## Tuning notes
+
+Findings from listening tests on a 60 s song (XL SFT model, 4B LM, seed 42 unless noted). They come from one listener and a few seeds, so treat them as starting points.
+
+- **Guidance:** `--guidance-scale 4` sounded cleaner and more human than the default 7 (lower values 3 and 2 were also tried). It held on a second seed. Turbo models ignore guidance.
+- **Tempo and key:** with `bpm` and `key` unset, the LM picks different ones on every run, even with a fixed seed (for example 200 BPM B-flat major, then 48 BPM C-sharp major, for the same prompt). Pin them to the style's own values.
+- **The LM rewrites your style text** by default (`use_cot_caption`), and the rewrite can add things you did not ask for, such as "gated reverb" and layered harmonies. Pass `advanced: {"use_cot_caption": false}` in the MCP, or run the backend with the rewrite off, to send the text unchanged.
+- **Speed:** XL SFT at 50 steps takes about 4 minutes for a 60 s song on an M5 Pro, roughly three times turbo.

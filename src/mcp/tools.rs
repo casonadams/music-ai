@@ -81,6 +81,7 @@ struct CreateSong {
     format: Option<AudioFormat>,
     model: Option<String>,
     steps: Option<u32>,
+    guidance_scale: Option<f32>,
     lm_model: Option<String>,
     advanced: Option<Map<String, Value>>,
 }
@@ -98,6 +99,7 @@ struct Variations {
     key: Option<String>,
     model: Option<String>,
     steps: Option<u32>,
+    guidance_scale: Option<f32>,
 }
 
 #[derive(Deserialize)]
@@ -239,6 +241,7 @@ impl Tools {
             format: args.format.unwrap_or(AudioFormat::Flac),
             model: args.model,
             steps: args.steps,
+            guidance_scale: args.guidance_scale,
             lm_model: args.lm_model,
             advanced: args.advanced.unwrap_or_default(),
             ..defaults
@@ -257,6 +260,7 @@ impl Tools {
             key_scale: args.key.or(original.key_scale),
             model: args.model.or(original.model),
             steps: args.steps.or(original.steps),
+            guidance_scale: args.guidance_scale.or(original.guidance_scale),
             seed: args.seed,
             ..original
         };
@@ -401,14 +405,15 @@ fn definitions() -> Vec<Value> {
                 "format": {"type": "string", "enum": ["flac", "wav", "mp3"], "description": "Default flac; mp3 needs ffmpeg on the server's PATH"},
                 "model": name("DiT model name; must be loaded (see list_models)"),
                 "steps": {"type": "integer", "minimum": 1, "maximum": 200, "description": "Diffusion steps: about 8 for turbo models, 32-64 for base and sft"},
+                "guidance_scale": {"type": "number", "exclusiveMinimum": 0, "description": "Prompt guidance for base and sft models (turbo ignores it). Lower sounds less processed; 4 sounded cleaner than the default 7 on XL SFT in listening tests"},
                 "lm_model": name("5Hz LM checkpoint name, e.g. acestep-5Hz-lm-4B"),
-                "advanced": {"type": "object", "description": "Extra backend fields such as guidance_scale or lm_temperature. Never overrides the fields above."},
+                "advanced": {"type": "object", "description": "Extra backend fields such as lm_temperature or use_cot_caption (false sends your style text to the model verbatim instead of the LM's rewrite). Never overrides the fields above."},
             }),
             &[],
         ),
         def(
             "variations",
-            "Generate new takes of an existing song with a new seed (or the one you pass), optionally changing the prompt, lyrics, bpm, key, duration, steps or model.",
+            "Generate new takes of an existing song with a new seed (or the one you pass), optionally changing the prompt, lyrics, bpm, key, duration, steps, guidance_scale or model.",
             json!({
                 "song": name("Name of an existing song (see list_songs)"),
                 "takes": takes,
@@ -420,6 +425,7 @@ fn definitions() -> Vec<Value> {
                 "key": name("Musical key such as \"A minor\""),
                 "model": name("DiT model name"),
                 "steps": {"type": "integer", "minimum": 1, "maximum": 200},
+                "guidance_scale": {"type": "number", "exclusiveMinimum": 0},
             }),
             &["song"],
         ),

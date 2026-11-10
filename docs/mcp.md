@@ -45,7 +45,7 @@ With Claude Code: `claude mcp add musicai -- /path/to/musicai mcp --out /path/to
 | `list_songs`, `get_song` | Finished songs, newest first, with the exact request, backend metadata and analysis |
 | `list_models` | Models installed on disk, and the models the running backend is configured to serve (they load on first use) |
 
-`create_song` accepts `model`, `steps`, `lm_model`, `bpm`, `key`, `seed`, `format` (default `flac`) and an `advanced` object forwarded to the backend (for example `guidance_scale`, `lm_temperature`; it never overrides the named fields). Leave `bpm` and `key` unset unless you need them.
+`create_song` accepts `model`, `steps`, `guidance_scale`, `lm_model`, `bpm`, `key`, `seed`, `format` (default `flac`) and an `advanced` object forwarded to the backend (for example `lm_temperature`, or `use_cot_caption: false` to send your style text unchanged instead of the LM's rewrite; it never overrides the named fields). Pin `bpm` and `key` to the style's own tempo and key: left unset, the LM picks different ones on every run. See [Prompting](prompting.md#tuning-notes) for what has sounded best.
 
 ## Songs and metadata
 

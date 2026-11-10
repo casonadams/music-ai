@@ -76,6 +76,7 @@ fn song_request(args: &GenerateArgs) -> Result<SongRequest> {
         format: args.format,
         model: args.model.clone(),
         steps: args.steps,
+        guidance_scale: args.guidance_scale,
         lm_model: args.lm_model.clone(),
         ..SongRequest::new(prompt)
     };

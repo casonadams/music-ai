@@ -177,7 +177,7 @@ async fn an_agent_can_write_generate_review_and_vary_a_song() {
         &tools,
         "create_song",
         json!({"style": "new-wave", "lyrics_name": "loop", "duration": 30, "takes": 2,
-               "seed": 100, "steps": 8, "format": "wav"}),
+               "seed": 100, "steps": 8, "guidance_scale": 4, "format": "wav"}),
     )
     .await;
     let jobs = created["jobs"].as_array().unwrap();
@@ -192,6 +192,7 @@ async fn an_agent_can_write_generate_review_and_vary_a_song() {
         assert_eq!(submitted[0]["prompt"], "synth pop, 120 bpm");
         assert_eq!(submitted[0]["lyrics"], "[verse]\nrun it again\n");
         assert_eq!(submitted[0]["inference_steps"], 8);
+        assert_eq!(submitted[0]["guidance_scale"], 4.0);
         assert_eq!(submitted[1]["seed"], 101);
     }
 

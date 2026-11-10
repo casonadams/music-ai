@@ -60,6 +60,8 @@ pub struct SongRequest {
     pub model: Option<String>,
     /// Diffusion steps: turbo models want about 8, base and sft about 32-64.
     pub steps: Option<u32>,
+    /// Prompt guidance (CFG) strength. Affects base and sft models, not turbo.
+    pub guidance_scale: Option<f32>,
     /// 5Hz LM checkpoint name, e.g. `acestep-5Hz-lm-4B`.
     pub lm_model: Option<String>,
     /// Extra backend fields (for example `guidance_scale`, `lm_temperature`).
@@ -82,6 +84,8 @@ pub enum InvalidRequest {
     Bpm,
     #[error("steps must be between {MIN_STEPS} and {MAX_STEPS}")]
     Steps,
+    #[error("guidance_scale must be a positive number")]
+    Guidance,
 }
 
 impl SongRequest {
@@ -96,6 +100,7 @@ impl SongRequest {
             format: AudioFormat::default(),
             model: None,
             steps: None,
+            guidance_scale: None,
             lm_model: None,
             advanced: Map::new(),
         }
@@ -116,6 +121,12 @@ impl SongRequest {
             .is_some_and(|s| !(MIN_STEPS..=MAX_STEPS).contains(&s))
         {
             return Err(InvalidRequest::Steps);
+        }
+        if self
+            .guidance_scale
+            .is_some_and(|g| !(g.is_finite() && g > 0.0))
+        {
+            return Err(InvalidRequest::Guidance);
         }
         Ok(())
     }
@@ -176,7 +187,7 @@ mod tests {
     #[test]
     fn validate_enforces_bounds() {
         type Case = (fn(&mut SongRequest), Result<(), InvalidRequest>);
-        let cases: [Case; 11] = [
+        let cases: [Case; 14] = [
             (|_| {}, Ok(())),
             (|r| r.prompt = "  ".into(), Err(InvalidRequest::EmptyPrompt)),
             (|r| r.duration = 9.9, Err(InvalidRequest::Duration)),
@@ -188,6 +199,15 @@ mod tests {
             (|r| r.steps = Some(0), Err(InvalidRequest::Steps)),
             (|r| r.steps = Some(50), Ok(())),
             (|r| r.steps = Some(201), Err(InvalidRequest::Steps)),
+            (
+                |r| r.guidance_scale = Some(0.0),
+                Err(InvalidRequest::Guidance),
+            ),
+            (
+                |r| r.guidance_scale = Some(f32::NAN),
+                Err(InvalidRequest::Guidance),
+            ),
+            (|r| r.guidance_scale = Some(4.0), Ok(())),
         ];
         for (mutate, expected) in cases {
             let mut r = SongRequest::new("pop punk");
