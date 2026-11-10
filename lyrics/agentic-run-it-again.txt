@@ -1,0 +1,50 @@
+[intro]
+Ah, ah, ah, ah
+
+[verse 1]
+Neon on the monitor, a cursor in the dark
+I typed a single sentence and the agent made its mark
+It reads across the repo like a signal in the night
+Planning every module, getting every layer right
+
+[pre-chorus]
+And the screen is glowing brighter
+Every function getting lighter
+
+[chorus]
+Run it again, run it again, the loop is turning on
+Run it again, run it again, we'll build until the dawn
+Review the lines, check the tests, then we send it out
+Run it again, run it again, there's nothing left to doubt
+
+[verse 2]
+There's a sub-agent humming in a window on the side
+It's writing up the tests while the main one starts to hide
+The context starts to fade so we summarize and go
+A little bit of memory is all we need to know
+
+[pre-chorus]
+And the logs are shining brighter
+Every pipeline getting tighter
+
+[chorus]
+Run it again, run it again, the loop is turning on
+Run it again, run it again, we'll build until the dawn
+Review the lines, check the tests, then we send it out
+Run it again, run it again, there's nothing left to doubt
+
+[bridge]
+Hold the line, hold the line
+The human reads the diff in time
+Hold the line, hold the line
+Ship it when the lights are green
+
+[chorus]
+Run it again, run it again, the loop is turning on
+Run it again, run it again, we'll build until the dawn
+Review the lines, check the tests, then we send it out
+Run it again, run it again, there's nothing left to doubt
+
+[outro]
+Ah, ah, ah, ah
+Run it again

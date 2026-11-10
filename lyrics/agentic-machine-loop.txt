@@ -1,0 +1,53 @@
+[intro]
+Build. Test. Deploy.
+
+[verse 1]
+Wires in the basement, a hum inside the wall
+The pipeline starts to grind and the servers heed the call
+A thousand tool calls firing from a machine that never sleeps
+Every line it writes is a promise that it keeps
+
+[pre-chorus]
+Feed it the prompt
+Feed it the code
+Watch it burn through the load
+
+[chorus]
+Machine in the loop, machine in the loop
+Gears turn over, plan and execute
+Machine in the loop, machine in the loop
+You hold the key, you decide what ships
+
+[verse 2]
+The context window rattles like a chain around its throat
+It forgets what you told it so you write another note
+A sub-agent in the dark is crawling through the tests
+It fails and it retries until the circuit gets some rest
+
+[pre-chorus]
+Feed it the prompt
+Feed it the code
+Watch it burn through the load
+
+[chorus]
+Machine in the loop, machine in the loop
+Gears turn over, plan and execute
+Machine in the loop, machine in the loop
+You hold the key, you decide what ships
+
+[bridge]
+Read the diff
+Read the diff
+Nothing merges till you read the diff
+Trust nothing
+Verify everything
+
+[chorus]
+Machine in the loop, machine in the loop
+Gears turn over, plan and execute
+Machine in the loop, machine in the loop
+You hold the key, you decide what ships
+
+[outro]
+Build. Test. Deploy.
+You decide what ships.

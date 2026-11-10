@@ -1,72 +1,23 @@
 # Examples
 
-## Pop punk, about AI token usage (150 seconds)
+Every song so far was generated for 150 seconds with `musicai generate --style-file styles/<style>.txt --lyrics-file lyrics/<lyrics>.txt -d 150`. A 150 second song took about 80 to 110 seconds on an M5 Pro with 48 GB.
 
-Generated in about 82 seconds on an M5 Pro with 48 GB.
+| Lyrics | Style | Notes |
+| --- | --- | --- |
+| `ai-token-usage` | `pop-punk` | Token costs through the SDLC |
+| `sdlc-shift-left` | `celtic-punk` | "Ship it left", a play on shift left |
+| `agentic-loop` | `hard-rock` | Agents in the loop |
+| `agentic-middle` | `emo-pop-punk` | Hang on, you are in the middle of the sprint |
+| `agentic-ship-easy` | `acoustic-rock` | One small commit at a time |
+| `agentic-run-it-again` | `new-wave` | Run it again |
+| `agentic-machine-loop` | `industrial-rock` | You decide what ships |
 
-Style:
-
-```
-late 90s pop punk, fast driving drums, palm-muted distorted guitars, energetic male vocals, catchy hooks, gang vocals in chorus, 170 bpm, upbeat, skate punk
-```
-
-Lyrics:
-
-```
-[intro]
-Oh-oh-oh, oh-oh-oh
-
-[verse 1]
-Planning on a whiteboard, got a vision in my head
-Typed a thousand words of spec and the meter started ahead
-Requirements are changing but the context window stays
-Every token that I spend is a dollar thrown away
-
-[pre-chorus]
-So I prompt, I pay, I prompt again
-Watching the usage graph climb up past ten
-
-[chorus]
-Tokens, tokens, burning through the night
-From the first commit to the final release
-Tokens, tokens, I can not keep track
-SDLC and my budget is gone
-
-[verse 2]
-Design review at midnight, let the model draw the plan
-Coding with a copilot, now the bill is out of hand
-Unit tests are green, then I paste the whole repo in
-Four hundred thousand tokens just to fix one little thing
-
-[pre-chorus]
-So I prompt, I pay, I prompt again
-Debugging with the agent and it loops again
-
-[chorus]
-Tokens, tokens, burning through the night
-From the first commit to the final release
-Tokens, tokens, I can not keep track
-SDLC and my budget is gone
-
-[bridge]
-Deploy on Friday, yeah we never learn
-Monitoring is screaming and the pager starts to burn
-Maintenance forever and the invoice never ends
-I will trim the prompt and cache it, start again
-
-[chorus]
-Tokens, tokens, burning through the night
-From the first commit to the final release
-Tokens, tokens, now I finally see
-Ship it small and the budget is free
-
-[outro]
-Oh-oh-oh, oh-oh-oh
-Tokens, tokens
-```
-
-Save the lyrics to `lyrics.txt`, then:
+The lyrics were each written for the feel of the style they were first paired with, but any lyrics work with any style. For example:
 
 ```sh
-musicai generate "late 90s pop punk, fast driving drums, palm-muted distorted guitars, energetic male vocals, catchy hooks, gang vocals in chorus, 170 bpm, upbeat, skate punk" --lyrics-file lyrics.txt -d 150
+musicai generate --style-file styles/new-wave.txt --lyrics-file lyrics/agentic-loop.txt -d 150
 ```
+
+writes `output/agentic-loop-new-wave.mp3`.
+
+Each style was chosen by describing a well-known song's feel with tags, without naming the artist. Lyrics are original.
