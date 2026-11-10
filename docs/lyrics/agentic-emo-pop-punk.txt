@@ -1,0 +1,50 @@
+[intro]
+Oh, oh, oh, oh
+
+[verse 1]
+The build is red again and the agent's got that look
+Seventeen files changed and it never read the book
+You're staring at the diff at half past two a.m.
+Wondering if the thing you shipped was ever worth the pain
+
+[pre-chorus]
+But it's only the first draft, it was never meant to be done
+You're a few good prompts away from the one
+
+[chorus]
+So hang on, you're in the middle of the sprint
+The tests will turn to green, just give the loop some time
+Hang on, nothing breaks the way it did before
+Iterate and review, you'll get there, you'll get there
+
+[verse 2]
+The context window's full and it forgot what you asked
+So you write it down again and you trim the long past
+A sub-agent is lost and a tool call timed out
+But you've been here before and you know how this plays out
+
+[pre-chorus]
+It's only the second pass, it was never meant to be clean
+You're a few small fixes from the thing you can see
+
+[chorus]
+So hang on, you're in the middle of the sprint
+The tests will turn to green, just give the loop some time
+Hang on, nothing breaks the way it did before
+Iterate and review, you'll get there, you'll get there
+
+[bridge]
+And I know it feels like noise
+Every commit, every voice
+But the thing is taking shape
+One more run and one more take
+
+[chorus]
+So hang on, you're in the middle of the sprint
+The tests will turn to green, just give the loop some time
+Hang on, nothing breaks the way it did before
+Iterate and review, you'll get there, you'll get there
+
+[outro]
+Oh, oh, oh, oh
+You'll get there
