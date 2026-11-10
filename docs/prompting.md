@@ -60,3 +60,15 @@ All: XL SFT (`acestep-v15-xl-sft`), 50 steps, 4B LM, `--guidance-scale 4`, 60 s,
 | `new-wave` | `agentic-loop` | 168 / E minor | 42 | Clean and crisp; also fine with seeds 7 and 99 |
 
 Use `musicai generate --style-file styles/<style>.txt --lyrics-file lyrics/<lyrics>.txt --model acestep-v15-xl-sft --lm-model acestep-5Hz-lm-4B --steps 50 --guidance-scale 4 --bpm <bpm> --key "<key>" --seed <seed> -f flac -d 60`. `musicai serve` must have been started with the same `--model` and `--lm-model`.
+
+### Open: vocals still sound slightly off
+
+The best takes still have a small unexplained oddness in the vocals. Untested ideas, one change at a time from the best take:
+
+- **Plain lyrics.** Words like "sub-agents", "repo" and "tool calls" may be sung oddly.
+- **No tiled VAE decode.** `advanced: {"use_tiled_decode": false}`. The API decodes in overlapping chunks by default (512 latent frames, 64 overlap), so seams could sit near 15, 31 and 46 s of a 60 s song.
+- **Adaptive Dual Guidance.** `advanced: {"use_adg": true}` (base and sft models).
+- **Guidance only for part of sampling.** `advanced: {"cfg_interval_end": 0.8}`.
+- **Alternative VAE.** `musicai serve --vae scragvae`; one listening run was inconclusive and the log never confirmed the VAE it loaded.
+
+DCW (wavelet correction) is not a suspect: the API turns it off for sft models because forcing it on distorts the audio.
