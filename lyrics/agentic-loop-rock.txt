@@ -1,0 +1,75 @@
+[intro]
+Yeah! Let's GO!
+
+[verse 1]
+Woke up to a ticket
+Repo full of code
+Told the agent what I wanted
+Now it's on the road
+Read a hundred files
+Before my coffee's cold
+Made a plan and called a tool
+It never needs a hold
+
+[pre-chorus]
+No hands on the keyboard
+Running on its own
+Sub-agents spinning up
+In every terminal zone
+
+[chorus - powerful]
+AGENTS IN THE LOOP!
+Plan it, build it, test it, GO!
+AGENTS IN THE LOOP!
+(watch the tool calls flow)
+Keep a human at the wheel
+Don't you let it run alone
+AGENTS IN THE LOOP!
+(ship the thing for real)
+
+[verse 2]
+One agent wrote the tests
+Another broke them clean
+Context window filling up
+With everything it's seen
+Summarized the history
+Carried on the fight
+Opened up a pull request
+In the dead of night
+
+[pre-chorus]
+No hands on the keyboard
+Running on its own
+Sub-agents spinning up
+In every terminal zone
+
+[chorus - powerful]
+AGENTS IN THE LOOP!
+Plan it, build it, test it, GO!
+AGENTS IN THE LOOP!
+(watch the tool calls flow)
+Keep a human at the wheel
+Don't you let it run alone
+AGENTS IN THE LOOP!
+(ship the thing for real)
+
+[bridge]
+REVIEW IT!
+Read the diff!
+Trust but verify
+Every single commit
+REVIEW IT!
+Read the diff!
+The human owns the ship
+
+[chorus - powerful]
+AGENTS IN THE LOOP!
+Plan it, build it, test it, GO!
+AGENTS IN THE LOOP!
+(watch the tool calls flow)
+AGENTS IN THE LOOP!
+(ship the thing for real)
+
+[outro]
+Agents in the loop, yeah!
+SHIP THE THING FOR REAL!

@@ -48,3 +48,15 @@ Findings from listening tests on a 60 s song (XL SFT model, 4B LM, seed 42 unles
 - **Tempo and key:** with `bpm` and `key` unset, the LM picks different ones on every run, even with a fixed seed (for example 200 BPM B-flat major, then 48 BPM C-sharp major, for the same prompt). Pin them to the style's own values.
 - **The LM rewrites your style text** by default (`use_cot_caption`), and the rewrite can add things you did not ask for, such as "gated reverb" and layered harmonies. Pass `advanced: {"use_cot_caption": false}` in the MCP, or run the backend with the rewrite off, to send the text unchanged.
 - **Speed:** XL SFT at 50 steps takes about 4 minutes for a 60 s song on an M5 Pro, roughly three times turbo.
+- **Lyrics for power:** the ACE-Step docs say UPPERCASE gives stronger vocal intensity, parentheses mark background vocals, one descriptor per section tag works better than stacking (`[chorus - powerful]`), and 6-10 syllables per line align best with the beat. `lyrics/agentic-loop-rock.txt` applies these. With the `hard-rock` style it gave the best hard-rock take in listening (`hr2-g4-s7`), better than the same style with the longer-lined `agentic-loop` lyrics.
+
+### Recipes that sounded best
+
+All: XL SFT (`acestep-v15-xl-sft`), 50 steps, 4B LM, `--guidance-scale 4`, 60 s, flac.
+
+| Style | Lyrics | bpm / key | Seed | Notes |
+| --- | --- | --- | --- | --- |
+| `hard-rock` | `agentic-loop-rock` | 116 / A major | 7 | Best rock take so far |
+| `new-wave` | `agentic-loop` | 168 / E minor | 42 | Clean and crisp; also fine with seeds 7 and 99 |
+
+Use `musicai generate --style-file styles/<style>.txt --lyrics-file lyrics/<lyrics>.txt --model acestep-v15-xl-sft --lm-model acestep-5Hz-lm-4B --steps 50 --guidance-scale 4 --bpm <bpm> --key "<key>" --seed <seed> -f flac -d 60`. `musicai serve` must have been started with the same `--model` and `--lm-model`.

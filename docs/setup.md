@@ -37,6 +37,8 @@ mise run serve   # cargo run --release -- serve
 | `--lm-model` | backend default | 5Hz LM, for example `acestep-5Hz-lm-4B` |
 | `--vae` | `official` | Audio VAE, for example `scragvae` (downloaded on first use). Changes timbre and vocal grain, so compare by ear |
 
+Quality settings that sounded best are in [Prompting](prompting.md#tuning-notes). For example `musicai serve --model acestep-v15-xl-sft --lm-model acestep-5Hz-lm-4B`.
+
 Run `serve` from the repo root so the default `--backend-dir` resolves, or pass a path. `mise run` always runs from the repo root.
 
 ## Models
