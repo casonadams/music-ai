@@ -12,7 +12,7 @@ epic orchestral, choir, taiko drums, cinematic
 
 Describe the style with tags rather than artist names.
 
-## Lyrics (`--lyrics` or `--lyrics-file`)
+## Lyrics (`--lyrics-file`)
 
 Put a section tag on its own line, then the words.
 
@@ -25,10 +25,10 @@ Everything is gonna be alright
 
 Tags: `[intro]`, `[verse]`, `[pre-chorus]`, `[chorus]`, `[bridge]`, `[outro]`, `[instrumental]`.
 
-- Prefer `--lyrics-file lyrics.txt` for anything longer than a few lines.
+- Write the lyrics to a file in `docs/lyrics/` and pass it with `--lyrics-file`. The file name also becomes the song's file name. `--lyrics "..."` exists for quick inline tests.
 - Keep lines short and singable, with similar line lengths per verse.
 - Match lyric amount to duration. Two verses and a chorus need roughly 90 to 150 seconds.
-- For no vocals, pass `--lyrics "[instrumental]"`.
+- For no vocals, put `[instrumental]` in the lyrics file.
 
 ## Iterating
 
