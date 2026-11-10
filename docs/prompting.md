@@ -49,6 +49,8 @@ Findings from listening tests on a 60 s song (XL SFT model, 4B LM, seed 42 unles
 - **The LM rewrites your style text** by default (`use_cot_caption`), and the rewrite can add things you did not ask for, such as "gated reverb" and layered harmonies. Pass `advanced: {"use_cot_caption": false}` in the MCP, or run the backend with the rewrite off, to send the text unchanged.
 - **Speed:** XL SFT at 50 steps takes about 4 minutes for a 60 s song on an M5 Pro, roughly three times turbo.
 - **Lyrics for power:** the ACE-Step docs say UPPERCASE gives stronger vocal intensity, parentheses mark background vocals, one descriptor per section tag works better than stacking (`[chorus - powerful]`), and 6-10 syllables per line align best with the beat. `lyrics/agentic-loop-rock.txt` applies these. With the `hard-rock` style it gave the best hard-rock take in listening (`hr2-g4-s7`), better than the same style with the longer-lined `agentic-loop` lyrics.
+- **Match the length to the lyrics.** Asking for 120 s with about 98 s of lyrics (`twins-almost-twelve`, 72 bpm) left filler noise after the song ended. Size the duration to the lyrics (the 72 bpm ballad ran about 98 s for two verses, two choruses and a bridge), or trim and fade with `ffmpeg -t <secs> -af afade=t=out:st=<secs-3>:d=3`.
+- **Mandarin needs characters, not pinyin.** Tone-less pinyin ("ni hao") is sung with English intonation. Write the Mandarin words in Chinese characters (你好, 谢谢) so the model has the tones; the docs say languages can be mixed in one song. Sung tones are still not perfect, which can be charming in a light-hearted song (`lyrics/twins-ni-hao.txt`).
 
 ### Recipes that sounded best
 

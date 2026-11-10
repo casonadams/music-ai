@@ -11,6 +11,9 @@ Every song so far was generated for 150 seconds with `musicai generate --style-f
 | `agentic-ship-easy` | `acoustic-rock` | One small commit at a time |
 | `agentic-run-it-again` | `new-wave` | Run it again |
 | `agentic-machine-loop` | `industrial-rock` | You decide what ships |
+| `twins-almost-twelve` | `british-ballad` | Twins turning 12, a 1960s British piano ballad with a singalong chorus. Use about 100 s |
+| `twins-ni-hao` | `british-bounce` | Twins learning Mandarin, mixing English with Chinese characters |
+| `twins-infection-tag` | `british-beat` | Infection tag at recess, a fast British beat pop |
 
 The lyrics were each written for the feel of the style they were first paired with, but any lyrics work with any style. For example:
 
