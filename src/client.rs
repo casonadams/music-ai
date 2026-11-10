@@ -10,6 +10,14 @@ use crate::model::{SongRequest, SongState, SongStatus};
 
 const POLL_INTERVAL: Duration = Duration::from_secs(2);
 
+pub fn output_stem(lyrics_file: Option<&Path>, style_file: Option<&Path>) -> Option<String> {
+    let stem = |p: &Path| p.file_stem().map(|s| s.to_string_lossy().into_owned());
+    match (lyrics_file.and_then(stem), style_file.and_then(stem)) {
+        (Some(lyrics), Some(style)) => Some(format!("{lyrics}-{style}")),
+        (lyrics, style) => lyrics.or(style),
+    }
+}
+
 pub async fn generate(
     server: &str,
     req: &SongRequest,
@@ -106,6 +114,22 @@ mod tests {
         let _ = std::fs::remove_dir_all(&dir);
         std::fs::create_dir_all(&dir).unwrap();
         dir
+    }
+
+    #[test]
+    fn output_stem_combines_lyrics_and_style_names() {
+        let lyrics = Path::new("lyrics/agentic-loop.txt");
+        let style = Path::new("styles/new-wave.txt");
+        assert_eq!(
+            output_stem(Some(lyrics), Some(style)).as_deref(),
+            Some("agentic-loop-new-wave")
+        );
+        assert_eq!(
+            output_stem(Some(lyrics), None).as_deref(),
+            Some("agentic-loop")
+        );
+        assert_eq!(output_stem(None, Some(style)).as_deref(), Some("new-wave"));
+        assert_eq!(output_stem(None, None), None);
     }
 
     #[tokio::test]

@@ -1,6 +1,6 @@
 # Prompting
 
-## Style tags (the positional argument)
+## Style tags (`--style-file` or the positional argument)
 
 Comma-separated genre, mood, instruments, vocal type, and tempo or era. Specific tags give better control.
 
@@ -10,7 +10,7 @@ dream pop, breathy female vocals, reverb guitars, synth pads, 90 bpm, melancholi
 epic orchestral, choir, taiko drums, cinematic
 ```
 
-Describe the style with tags rather than artist names.
+Describe the style with tags rather than artist names. Save tags you like in a file under `styles/` (one line is enough) and pass it with `--style-file`. The repo ships styles for the songs made so far; any style can be paired with any lyrics.
 
 ## Lyrics (`--lyrics-file`)
 
@@ -25,7 +25,7 @@ Everything is gonna be alright
 
 Tags: `[intro]`, `[verse]`, `[pre-chorus]`, `[chorus]`, `[bridge]`, `[outro]`, `[instrumental]`.
 
-- Write the lyrics to a file in `docs/lyrics/` and pass it with `--lyrics-file`. The file name also becomes the song's file name. `--lyrics "..."` exists for quick inline tests.
+- Write the lyrics to a file in `lyrics/` and pass it with `--lyrics-file`. `--lyrics "..."` exists for quick inline tests.
 - Keep lines short and singable, with similar line lengths per verse.
 - Match lyric amount to duration. Two verses and a chorus need roughly 90 to 150 seconds.
 - For no vocals, put `[instrumental]` in the lyrics file.

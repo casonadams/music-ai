@@ -1,9 +1,12 @@
-use std::{net::SocketAddr, path::PathBuf};
+use std::{
+    net::SocketAddr,
+    path::{Path, PathBuf},
+};
 
-use anyhow::{Context, Result};
+use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand};
 use musicai::{
-    client::generate,
+    client::{generate, output_stem},
     model::{AudioFormat, SongRequest},
     serve::{ServeOptions, serve},
 };
@@ -32,8 +35,12 @@ enum Command {
     },
     /// Generate a song through a running server and save it to disk
     Generate {
-        /// Style tags, e.g. "late 90s pop punk, male vocals, 170 bpm"
-        prompt: String,
+        /// Style tags, e.g. "late 90s pop punk, male vocals, 170 bpm" (or use --style-file)
+        #[arg(required_unless_present = "style_file", conflicts_with = "style_file")]
+        prompt: Option<String>,
+        /// File of style tags, e.g. styles/pop-punk.txt
+        #[arg(long)]
+        style_file: Option<PathBuf>,
         /// Lyrics with [verse]/[chorus] tags, or [instrumental]
         #[arg(long, conflicts_with = "lyrics_file")]
         lyrics: Option<String>,
@@ -54,7 +61,7 @@ enum Command {
         format: AudioFormat,
         #[arg(short, long, default_value = "output")]
         out: PathBuf,
-        /// Output file name without extension (default: the lyrics file's name)
+        /// Output file name without extension (default: lyrics and style file names)
         #[arg(short, long)]
         name: Option<String>,
         #[arg(long, env = "MUSICAI_SERVER", default_value = "http://127.0.0.1:8000")]
@@ -80,6 +87,7 @@ async fn main() -> Result<()> {
         }
         Command::Generate {
             prompt,
+            style_file,
             lyrics,
             lyrics_file,
             duration,
@@ -91,16 +99,15 @@ async fn main() -> Result<()> {
             name,
             server,
         } => {
-            let name = name.or_else(|| {
-                lyrics_file
-                    .as_ref()
-                    .and_then(|p| p.file_stem())
-                    .map(|s| s.to_string_lossy().into_owned())
-            });
+            let name = name.or_else(|| output_stem(lyrics_file.as_deref(), style_file.as_deref()));
+            let prompt = match (prompt, style_file) {
+                (Some(text), _) => text,
+                (None, Some(path)) => read_text(&path)?.trim().to_owned(),
+                (None, None) => bail!("a style prompt or --style-file is required"),
+            };
             let lyrics = match (lyrics, lyrics_file) {
                 (Some(text), _) => text,
-                (None, Some(path)) => std::fs::read_to_string(&path)
-                    .with_context(|| format!("reading {}", path.display()))?,
+                (None, Some(path)) => read_text(&path)?,
                 (None, None) => String::new(),
             };
             let request = SongRequest {
@@ -118,4 +125,8 @@ async fn main() -> Result<()> {
             Ok(())
         }
     }
+}
+
+fn read_text(path: &Path) -> Result<String> {
+    std::fs::read_to_string(path).with_context(|| format!("reading {}", path.display()))
 }

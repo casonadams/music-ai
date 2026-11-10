@@ -11,7 +11,7 @@ description = "Start the REST server and the ACE-Step backend"
 run = "cargo run --release -- serve"
 
 [tasks.generate]
-description = "Generate a song: mise run generate -- \"<style>\" --lyrics-file lyrics.txt -d 60"
+description = "Generate a song: mise run generate -- --style-file styles/new-wave.txt --lyrics-file lyrics/agentic-loop.txt -d 60"
 run = "cargo run --release -- generate"
 
 [tasks.test]
