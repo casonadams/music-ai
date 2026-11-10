@@ -2,7 +2,7 @@
 
 ## Pop punk, about AI token usage (150 seconds)
 
-Generated in about 82 seconds on an M1 Max.
+Generated in about 82 seconds on an M5 Pro with 48 GB.
 
 Style:
 

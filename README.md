@@ -1,6 +1,6 @@
 # music-ai
 
-Local AI song generation on Apple Silicon. A small Rust CLI (`musicai`) that serves a REST API and generates songs on top of [ACE-Step 1.5](https://github.com/ACE-Step/ACE-Step-1.5) (MIT). Tested on an M1 Max with 64 GB RAM.
+Local AI song generation on Apple Silicon. A small Rust CLI (`musicai`) that serves a REST API and generates songs on top of [ACE-Step 1.5](https://github.com/ACE-Step/ACE-Step-1.5) (MIT). Minimum: an M1 or newer Mac with 16 GB RAM (see [Setup](docs/setup.md#requirements)). Tested on an M5 Pro with 48 GB.
 
 ## Quick start
 

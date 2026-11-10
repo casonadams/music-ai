@@ -2,7 +2,9 @@
 
 ## Requirements
 
-- Apple Silicon Mac (tested: M1 Max, 64 GB)
+- Apple Silicon Mac (M1 or newer). Minimum 16 GB RAM, aiming for about 12 GB of unified memory available to the model. This minimum is an estimate and has not been tested on a 16 GB Mac.
+- Tested on an M5 Pro with 48 GB. With the default settings the backend picked its largest configuration (no offload, no quantization) and its process footprint was about 27 GB after one generation. On a smaller Mac, ACE-Step selects a smaller configuration from the detected memory.
+- About 18 GB of disk for the downloaded models.
 - [mise](https://mise.jdx.dev) (tasks, plus `mpv` for playback and `ffmpeg` for mp3), configured in `mise.toml`
 - Rust toolchain and [uv](https://docs.astral.sh/uv/)
 
@@ -38,7 +40,7 @@ Run `serve` from the repo root so the default `--backend-dir` resolves, or pass 
 
 Models download on the first generation request, not at startup. Expect more than 10 GB of downloads and several minutes before the first song finishes. Later runs reuse `ACE-Step-1.5/checkpoints/`.
 
-Observed on an M1 Max with the turbo model: about 25 to 40 seconds for a 30 second song, and about 80 seconds for a 150 second song.
+Observed on an M5 Pro (48 GB) with the turbo model: about 25 to 40 seconds for a 30 second song, and about 80 to 110 seconds for a 150 second song.
 
 ## Formats and ffmpeg
 
