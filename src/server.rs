@@ -11,7 +11,7 @@ use serde_json::json;
 
 use crate::{
     backend::{Backend, TaskState},
-    model::{InvalidRequest, SongRequest, SongState, SongStatus},
+    model::{InvalidRequest, ModelInventory, SongRequest, SongState, SongStatus},
 };
 
 #[derive(Clone)]
@@ -24,6 +24,7 @@ pub fn router(state: AppState) -> Router {
         .route("/health", get(|| async { "ok" }))
         .route("/v1/songs", post(create_song))
         .route("/v1/songs/{id}", get(song_status))
+        .route("/v1/models", get(models))
         .route("/v1/songs/{id}/audio", get(song_audio))
         .with_state(state)
 }
@@ -61,6 +62,7 @@ async fn create_song(
         id,
         state: SongState::Running,
         error: None,
+        info: None,
     };
     Ok((StatusCode::ACCEPTED, Json(status)))
 }
@@ -69,12 +71,21 @@ async fn song_status(
     State(state): State<AppState>,
     Path(id): Path<String>,
 ) -> Result<Json<SongStatus>, ApiError> {
-    let (state, error) = match state.backend.task(&id).await? {
-        TaskState::Running => (SongState::Running, None),
-        TaskState::Succeeded { .. } => (SongState::Succeeded, None),
-        TaskState::Failed(reason) => (SongState::Failed, Some(reason)),
+    let (state, error, info) = match state.backend.task(&id).await? {
+        TaskState::Running => (SongState::Running, None, None),
+        TaskState::Succeeded { info, .. } => (SongState::Succeeded, None, Some(info)),
+        TaskState::Failed(reason) => (SongState::Failed, Some(reason), None),
     };
-    Ok(Json(SongStatus { id, state, error }))
+    Ok(Json(SongStatus {
+        id,
+        state,
+        error,
+        info,
+    }))
+}
+
+async fn models(State(state): State<AppState>) -> Result<Json<ModelInventory>, ApiError> {
+    Ok(Json(state.backend.models().await?))
 }
 
 async fn song_audio(
@@ -82,7 +93,7 @@ async fn song_audio(
     Path(id): Path<String>,
 ) -> Result<Response, ApiError> {
     match state.backend.task(&id).await? {
-        TaskState::Succeeded { file } => {
+        TaskState::Succeeded { file, .. } => {
             let upstream = state.backend.audio(&file).await?;
             let content_type = upstream.headers().get(CONTENT_TYPE).cloned();
             let bytes = upstream.bytes().await.map_err(anyhow::Error::from)?;

@@ -33,12 +33,32 @@ mise run serve   # cargo run --release -- serve
 | `--backend-url` | `http://127.0.0.1:8001` | ACE-Step API address (host and port are passed to the backend) |
 | `--backend-dir` | `ACE-Step-1.5` | Checkout with a synced `.venv` |
 | `--no-backend` | off | Use an ACE-Step API that is already running at `--backend-url` |
+| `--model` | backend default (`acestep-v15-turbo`) | DiT model to load; repeat up to three times to serve several. The first is the default; requests pick one with `--model` |
+| `--lm-model` | backend default | 5Hz LM, for example `acestep-5Hz-lm-4B` |
 
 Run `serve` from the repo root so the default `--backend-dir` resolves, or pass a path. `mise run` always runs from the repo root.
 
+## Models
+
+Models are stored in `ACE-Step-1.5/checkpoints/` by default. Set `ACESTEP_CHECKPOINTS_DIR` to use another location, for example an external drive or a directory shared between installs.
+
+```sh
+musicai download --list                                  # what can be fetched
+musicai download                                         # main bundle: turbo model, 1.7B LM, VAE, text encoder
+musicai download acestep-v15-xl-sft acestep-5Hz-lm-4B    # higher quality
+```
+
+`musicai download` runs the backend's downloader in your terminal, so its per-file progress bars show. `--all` downloads every model. Models you have already downloaded are skipped.
+
+| Model | Disk |
+| --- | --- |
+| `main` (turbo, 1.7B LM, VAE, text encoder) | about 9.5 GB |
+| `acestep-v15-xl-sft` | about 20 GB |
+| `acestep-5Hz-lm-4B` | about 8.4 GB |
+
 ## First run
 
-Models download on the first generation request, not at startup. Expect more than 10 GB of downloads and several minutes before the first song finishes. Later runs reuse `ACE-Step-1.5/checkpoints/`.
+If you skip `musicai download`, models download on the first generation request instead. Expect more than 10 GB of downloads and several minutes before the first song finishes. Later runs reuse the checkpoints directory.
 
 Observed on an M5 Pro (48 GB) with the turbo model: about 25 to 40 seconds for a 30 second song, and about 80 to 110 seconds for a 150 second song.
 

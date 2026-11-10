@@ -6,7 +6,7 @@ use std::{
 use anyhow::{Context, Result, bail};
 use tokio::io::AsyncWriteExt;
 
-use crate::model::{SongRequest, SongState, SongStatus};
+use crate::model::{ModelInventory, SongRequest, SongState, SongStatus};
 
 const POLL_INTERVAL: Duration = Duration::from_secs(2);
 
@@ -24,31 +24,10 @@ pub async fn generate(
     out_dir: &Path,
     name: Option<&str>,
 ) -> Result<PathBuf> {
-    let server = server.trim_end_matches('/');
     let http = reqwest::Client::new();
-
-    let created: SongStatus = ok_json(http.post(format!("{server}/v1/songs")).json(req)).await?;
+    let created = submit(&http, server, req).await?;
     eprintln!("generating {}", created.id);
-
-    loop {
-        tokio::time::sleep(POLL_INTERVAL).await;
-        let status: SongStatus =
-            ok_json(http.get(format!("{server}/v1/songs/{}", created.id))).await?;
-        match status.state {
-            SongState::Running => continue,
-            SongState::Succeeded => break,
-            SongState::Failed => bail!(status.error.unwrap_or_else(|| "generation failed".into())),
-        }
-    }
-
-    let audio = http
-        .get(format!("{server}/v1/songs/{}/audio", created.id))
-        .send()
-        .await
-        .context("downloading audio")?;
-    let audio = ensure_success(audio).await?.bytes().await?;
-
-    tokio::fs::create_dir_all(out_dir).await?;
+    wait(&http, server, &created.id).await?;
     let stem = match name {
         Some(name) => name.to_owned(),
         None => {
@@ -57,7 +36,60 @@ pub async fn generate(
             format!("{secs}-{id_prefix}")
         }
     };
-    write_unique(out_dir, &stem, req.format.extension(), &audio).await
+    save_audio(
+        &http,
+        server,
+        &created.id,
+        out_dir,
+        &stem,
+        req.format.extension(),
+    )
+    .await
+}
+
+pub async fn submit(http: &reqwest::Client, server: &str, req: &SongRequest) -> Result<SongStatus> {
+    let server = server.trim_end_matches('/');
+    ok_json(http.post(format!("{server}/v1/songs")).json(req)).await
+}
+
+/// Polls until the song has finished; a failed song is an error.
+pub async fn wait(http: &reqwest::Client, server: &str, id: &str) -> Result<SongStatus> {
+    let server = server.trim_end_matches('/');
+    loop {
+        tokio::time::sleep(POLL_INTERVAL).await;
+        let status: SongStatus = ok_json(http.get(format!("{server}/v1/songs/{id}"))).await?;
+        match status.state {
+            SongState::Running => continue,
+            SongState::Succeeded => return Ok(status),
+            SongState::Failed => bail!(status.error.unwrap_or_else(|| "generation failed".into())),
+        }
+    }
+}
+
+/// Downloads a finished song into `out_dir` as `<stem>.<ext>` without overwriting.
+pub async fn save_audio(
+    http: &reqwest::Client,
+    server: &str,
+    id: &str,
+    out_dir: &Path,
+    stem: &str,
+    ext: &str,
+) -> Result<PathBuf> {
+    let server = server.trim_end_matches('/');
+    let audio = http
+        .get(format!("{server}/v1/songs/{id}/audio"))
+        .send()
+        .await
+        .context("downloading audio")?;
+    let audio = ensure_success(audio).await?.bytes().await?;
+    tokio::fs::create_dir_all(out_dir).await?;
+    write_unique(out_dir, stem, ext, &audio).await
+}
+
+/// DiT and LM models the backend is configured to serve.
+pub async fn models(http: &reqwest::Client, server: &str) -> Result<ModelInventory> {
+    let server = server.trim_end_matches('/');
+    ok_json(http.get(format!("{server}/v1/models"))).await
 }
 
 pub async fn write_unique(dir: &Path, stem: &str, ext: &str, bytes: &[u8]) -> Result<PathBuf> {

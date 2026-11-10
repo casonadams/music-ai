@@ -1,5 +1,9 @@
+pub mod analysis;
 pub mod backend;
 pub mod client;
+pub mod download;
+pub mod library;
+pub mod mcp;
 pub mod model;
 pub mod serve;
 pub mod server;
