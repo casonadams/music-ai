@@ -22,11 +22,12 @@ pub struct ServeOptions {
     pub backend_dir: Option<PathBuf>,
     pub models: Vec<String>,
     pub lm_model: Option<String>,
+    pub vae: Option<String>,
 }
 
 pub async fn serve(opts: ServeOptions) -> Result<()> {
     let backend = Arc::new(Backend::new(opts.backend_url.clone()));
-    let env = backend_env(&opts.models, opts.lm_model.as_deref())?;
+    let env = backend_env(&opts.models, opts.lm_model.as_deref(), opts.vae.as_deref())?;
     let mut child = match &opts.backend_dir {
         Some(dir) => Some(spawn_backend(dir, &opts.backend_url, &env)?),
         None if env.is_empty() => None,
@@ -102,8 +103,12 @@ async fn wait_ready(backend: &Backend, mut child: Option<&mut Child>, url: &str)
 const MAX_DIT_MODELS: usize = 3;
 
 /// Backend environment selecting its DiT models (up to three, loaded side by
-/// side; requests pick one by name) and its 5Hz LM.
-fn backend_env(models: &[String], lm_model: Option<&str>) -> Result<Vec<(&'static str, String)>> {
+/// side; requests pick one by name), its 5Hz LM and its audio VAE.
+fn backend_env(
+    models: &[String],
+    lm_model: Option<&str>,
+    vae: Option<&str>,
+) -> Result<Vec<(&'static str, String)>> {
     const SLOTS: [&str; MAX_DIT_MODELS] = [
         "ACESTEP_CONFIG_PATH",
         "ACESTEP_CONFIG_PATH2",
@@ -113,9 +118,15 @@ fn backend_env(models: &[String], lm_model: Option<&str>) -> Result<Vec<(&'stati
         bail!("at most {MAX_DIT_MODELS} --model values are supported");
     }
     let mut env: Vec<_> = SLOTS.into_iter().zip(models.iter().cloned()).collect();
-    if let Some(lm) = lm_model {
-        env.push(("ACESTEP_LM_MODEL_PATH", lm.to_owned()));
-    }
+    let optional = [
+        ("ACESTEP_LM_MODEL_PATH", lm_model),
+        ("ACESTEP_VAE_CHECKPOINT", vae),
+    ];
+    env.extend(
+        optional
+            .into_iter()
+            .filter_map(|(key, value)| value.map(|v| (key, v.to_owned()))),
+    );
     Ok(env)
 }
 
@@ -128,21 +139,27 @@ mod tests {
     }
 
     #[test]
-    fn models_fill_backend_slots_in_order_and_lm_is_separate() {
-        let env = backend_env(&names(&["xl-sft", "turbo"]), Some("lm-4B")).unwrap();
+    fn models_lm_and_vae_become_backend_environment() {
+        let env = backend_env(
+            &names(&["xl-sft", "turbo"]),
+            Some("lm-4B"),
+            Some("scragvae"),
+        )
+        .unwrap();
         assert_eq!(
             env,
             [
                 ("ACESTEP_CONFIG_PATH", "xl-sft".to_owned()),
                 ("ACESTEP_CONFIG_PATH2", "turbo".to_owned()),
                 ("ACESTEP_LM_MODEL_PATH", "lm-4B".to_owned()),
+                ("ACESTEP_VAE_CHECKPOINT", "scragvae".to_owned()),
             ]
         );
-        assert!(backend_env(&[], None).unwrap().is_empty());
+        assert!(backend_env(&[], None, None).unwrap().is_empty());
     }
 
     #[test]
     fn more_than_three_models_is_rejected() {
-        assert!(backend_env(&names(&["a", "b", "c", "d"]), None).is_err());
+        assert!(backend_env(&names(&["a", "b", "c", "d"]), None, None).is_err());
     }
 }

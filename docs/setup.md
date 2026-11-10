@@ -35,6 +35,7 @@ mise run serve   # cargo run --release -- serve
 | `--no-backend` | off | Use an ACE-Step API that is already running at `--backend-url` |
 | `--model` | backend default (`acestep-v15-turbo`) | DiT model to load; repeat up to three times to serve several. The first is the default; requests pick one with `--model` |
 | `--lm-model` | backend default | 5Hz LM, for example `acestep-5Hz-lm-4B` |
+| `--vae` | `official` | Audio VAE, for example `scragvae` (downloaded on first use). Changes timbre and vocal grain, so compare by ear |
 
 Run `serve` from the repo root so the default `--backend-dir` resolves, or pass a path. `mise run` always runs from the repo root.
 

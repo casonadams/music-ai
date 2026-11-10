@@ -19,6 +19,7 @@ pub async fn run_serve(args: ServeArgs) -> Result<()> {
         backend_dir: (!args.no_backend).then_some(args.backend_dir),
         models: args.models,
         lm_model: args.lm_model,
+        vae: args.vae,
     })
     .await
 }

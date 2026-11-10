@@ -43,6 +43,9 @@ pub struct ServeArgs {
     /// 5Hz LM to load, e.g. acestep-5Hz-lm-4B
     #[arg(long)]
     pub lm_model: Option<String>,
+    /// Audio VAE to use: `official` (default) or `scragvae`, or a directory path
+    #[arg(long)]
+    pub vae: Option<String>,
 }
 
 #[derive(Args)]
