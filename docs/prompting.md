@@ -44,7 +44,7 @@ ACE-Step supports more fields (`time_signature`, `vocal_language`, `batch_size`,
 
 Findings from listening tests on a 60 s song (XL SFT model, 4B LM, seed 42 unless noted). They come from one listener and a few seeds, so treat them as starting points.
 
-- **Guidance:** `--guidance-scale 4` sounded cleaner and more human than the default 7 (lower values 3 and 2 were also tried). It held on a second seed. Turbo models ignore guidance.
+- **Guidance:** `--guidance-scale 4` sounded cleaner and more human than the default 7. It held on three seeds (42, 7, 99). High guidance (7 and 10) put a "weight" on the vocals, while 4 stayed clean. Values 2 and 3 were also generated; 5 and 6 are not yet judged. Guidance steers each step towards your tags and lyrics, so more is not better. Turbo models ignore it.
 - **Tempo and key:** with `bpm` and `key` unset, the LM picks different ones on every run, even with a fixed seed (for example 200 BPM B-flat major, then 48 BPM C-sharp major, for the same prompt). Pin them to the style's own values.
 - **The LM rewrites your style text** by default (`use_cot_caption`), and the rewrite can add things you did not ask for, such as "gated reverb" and layered harmonies. Pass `advanced: {"use_cot_caption": false}` in the MCP, or run the backend with the rewrite off, to send the text unchanged.
 - **Speed:** XL SFT at 50 steps takes about 4 minutes for a 60 s song on an M5 Pro, roughly three times turbo.
